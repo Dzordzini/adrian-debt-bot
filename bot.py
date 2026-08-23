@@ -78,6 +78,29 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
 
 
+async def test_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    chat_id = os.environ.get("ADRIAN_CHAT_ID")
+
+    if not chat_id:
+        await update.message.reply_text(
+            "Brak ADRIAN_CHAT_ID w zmiennych środowiskowych."
+        )
+        return
+
+    await context.bot.send_message(
+        chat_id=int(chat_id),
+        text=(
+            "🧪 TEST\n\n"
+            "Bot działa poprawnie i potrafi wysyłać "
+            "wiadomości do Adriana."
+        )
+    )
+
+    await update.message.reply_text(
+        "Wiadomość testowa została wysłana."
+    )
+
+
 async def debt(update: Update, context: ContextTypes.DEFAULT_TYPE):
     amount = get_debt()
 
@@ -110,7 +133,7 @@ async def increase_debt(context: ContextTypes.DEFAULT_TYPE):
     await context.bot.send_message(
         chat_id=int(chat_id),
         text=(
-            "Adrian, minęła kolejna doba.\n\n"
+            "💰 Adrian, minęła kolejna doba.\n\n"
             f"Poprzedni dług: {old_debt:.2f} PLN\n"
             "Naliczone: 20%\n"
             f"Nowy dług: {new_debt:.2f} PLN"
@@ -128,6 +151,7 @@ def main():
     )
 
     app.add_handler(CommandHandler("start", start))
+    app.add_handler(CommandHandler("test", test_message))
     app.add_handler(CommandHandler("dlug", debt))
 
     app.job_queue.run_daily(
