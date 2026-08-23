@@ -5,17 +5,12 @@ from datetime import time
 from zoneinfo import ZoneInfo
 
 from telegram import Update
-from telegram.ext import (
-    Application,
-    CommandHandler,
-    ContextTypes,
-)
+from telegram.ext import Application, CommandHandler, ContextTypes
 
 TOKEN = os.environ["TELEGRAM_BOT_TOKEN"]
 
 WARSAW = ZoneInfo("Europe/Warsaw")
 STARTING_DEBT = Decimal("497.66")
-
 DB_FILE = "debt.db"
 
 
@@ -78,10 +73,8 @@ def set_debt(amount):
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chat_id = update.effective_chat.id
 
-    print(f"Adrian Chat ID: {chat_id}")
-
     await update.message.reply_text(
-        "Bot działa. Twój Chat ID został zapisany w logach."
+        f"Bot działa.\nTwój Chat ID: {chat_id}"
     )
 
 
@@ -108,21 +101,24 @@ async def increase_debt(context: ContextTypes.DEFAULT_TYPE):
     chat_id = os.environ.get("ADRIAN_CHAT_ID")
 
     if not chat_id:
-        print("Brak ADRIAN_CHAT_ID — dług został naliczony, ale wiadomość nie została wysłana.")
+        print(
+            "Brak ADRIAN_CHAT_ID. "
+            "Dług został naliczony, ale wiadomość nie została wysłana."
+        )
         return
 
     await context.bot.send_message(
         chat_id=int(chat_id),
         text=(
-            f"Adrian, minęła kolejna doba.\n\n"
+            "Adrian, minęła kolejna doba.\n\n"
             f"Poprzedni dług: {old_debt:.2f} PLN\n"
-            f"Naliczone: 20%\n"
+            "Naliczone: 20%\n"
             f"Nowy dług: {new_debt:.2f} PLN"
         )
     )
 
 
-async def main():
+def main():
     init_db()
 
     app = (
@@ -148,9 +144,8 @@ async def main():
     print("Bot uruchomiony.")
     print("Naliczanie: codziennie 00:00 Europe/Warsaw.")
 
-    await app.run_polling()
+    app.run_polling()
 
 
 if __name__ == "__main__":
-    import asyncio
-    asyncio.run(main())
+    main()
