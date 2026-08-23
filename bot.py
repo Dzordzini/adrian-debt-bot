@@ -11,7 +11,7 @@ TOKEN = os.environ["TELEGRAM_BOT_TOKEN"]
 
 WARSAW = ZoneInfo("Europe/Warsaw")
 STARTING_DEBT = Decimal("497.66")
-DB_FILE = "debt.db"
+DB_FILE = "/data/debt.db"
 
 
 def get_db():
